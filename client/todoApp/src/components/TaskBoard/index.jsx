@@ -25,7 +25,6 @@ class TaskBoard extends Component {
 
     componentDidMount = () => {
         this.projectItemsFunctionAPI()
-        this.projectSelectedItemsAPI()
     }
 
     onSuccessGetProjectsItemsApi = (data) => {
@@ -48,30 +47,35 @@ class TaskBoard extends Component {
     }
 
     onSuccessProjectSelectedTodos = (data)=>{
-        
-        this.setState({todoTasksList: data});
+        if(data.length!==0){
+            this.setState({todoTasksList: data,projectSelected: data[0].project_id});
+        }
+        else{
+            this.setState({todoTasksList: data});
+        }
     }
 
 
     projectSelectedItemsAPI = async(projectId) =>{
-        const url = "http://localhost:3000/todo/33ac5b4f-b7d0-4b4a-8642-5a6be68a9c6d"
-        const options = {
-          method: 'GET'
+        if(projectId!=='' && projectId!==undefined){
+            const url = `http://localhost:3000/todo/${projectId}`
+            const options = {
+            method: 'GET'
+            }
+            const response = await fetch(url, options)
+            const data = await response.json()
+        
+            if (response.ok) {
+            this.onSuccessProjectSelectedTodos(data)
+            } else {
+            this.onFailureHomeApi()
+            }
         }
-        const response = await fetch(url, options)
-        const data = await response.json()
-       
-        if (response.ok) {
-          this.onSuccessProjectSelectedTodos(data)
-        } else {
-          this.onFailureHomeApi()
-        }
-
     }
 
 
     projectClicked = (projectId) =>{
-        this.projectSelectedItemsAPI()
+        this.projectSelectedItemsAPI(projectId)
     }
 
 
@@ -116,9 +120,7 @@ class TaskBoard extends Component {
 
     render(){
         const {projectsItems,todoTasksList} = this.state
-        console.log(todoTasksList,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-       
-       
+    
         return(
             <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
                 <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
@@ -130,8 +132,7 @@ class TaskBoard extends Component {
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
                             
                             {projectsItems.lenth===0 ? '' : projectsItems.map(each=>(
-                               
-                             <ProjectItem key={each.project_id} details={each}/>))}
+                             <ProjectItem key={each.project_id} details={each} projectClicked={this.projectClicked}/>))}
                         
                         </ul>
                         <hr/>
@@ -140,7 +141,7 @@ class TaskBoard extends Component {
                 </div>
                 </div>
                 <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
-                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} projectClicked={this.projectClicked}/>))}
+                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} />))}
                 </ul>
             </div>
         )

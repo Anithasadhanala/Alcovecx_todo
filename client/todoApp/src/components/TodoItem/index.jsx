@@ -2,7 +2,7 @@
 
 const TodoItem = (props) => {
 
-    const {details}= props
+    const {details}= props 
     const {task_name,start_time,end_time} = details
 
     const startDate = start_time.slice(0,10)

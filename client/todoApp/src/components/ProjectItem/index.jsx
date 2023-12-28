@@ -1,19 +1,30 @@
+import {Component} from 'react'
 
-const ProjectItem = (props) => {
-   
-    const {details,projectClicked} = props;
-    const {project_name,project_id} = details
+class ProjectItem extends Component {
 
-    const projectClickedFunctionCalled = () =>{
+     styling =" w-100 rounded-lg"
+    projectSelectedCalled = () =>{
+        styling = "w-100 bg-slate-200 rounded-lg"
         projectClicked(project_id)
     }
 
-    return(
+    render(){
+    
+   
+        const {details,projectClicked} = this.props;
+        const {project_name,project_id} = details
+    
+        
+    
+        
 
-        <li className="w-100 bg-slate-200  rounded-lg">
-            <button type="button" className="p-2 flex justify-start text-start w-100 font-sans font-normal" onClick={projectClickedFunctionCalled}>{project_name}</button>
-        </li>
-    )
+        return(
+
+            <li className={styling}>
+                <button type="button" className="p-2 flex justify-start text-start w-100 font-sans font-normal" onClick={this.projectSelectedCalled}>{project_name}</button>
+            </li>
+        )
+    }
 }
 
 export default ProjectItem
