@@ -1,48 +1,146 @@
 import {Component} from "react"
 import { v4 as uuidv4 } from 'uuid';
+import Popup from 'reactjs-popup'
+import { RxCross1 } from "react-icons/rx";
 import ProjectItem from "../ProjectItem"
 import TaskStatus from "../TaskStatus"
 
 
-
 const todoStatusItems = [
-    {id: uuidv4(),name : "To Do", color: "text-blue-600"},
-    {id: uuidv4(),name : "In Progress", color: "text-pink-400"},
-    {id: uuidv4(),name : "In Review", color: "text-blue-400"},
-    {id: uuidv4(),name : "Completed", color: "text-green-400"}
+    {id: uuidv4(),name : "To Do",namedb:"todo", color: "text-blue-600",bgColor : "bg-blue-100"},
+    {id: uuidv4(),name : "In Progress",namedb:"inprogress", color: "text-pink-400",bgColor : "bg-pink-100"},
+    {id: uuidv4(),name : "In Review",namedb:"inreview", color: "text-blue-400",bgColor : "bg-blue-100"},
+    {id: uuidv4(),name : "Completed",namedb:"completed", color: "text-green-400",bgColor : "bg-green-100"},
 ];
 
-const projectItems = [
-    {id: uuidv4(),name: "Freelance Project"},
-    {id: uuidv4(),name: "SBI Outsource"},
-    {id: uuidv4(),name: "HPCL Project 1"}
-]
+
+
+
+
 
 class TaskBoard extends Component {
 
-   
-    
+    state = {projectsItems: [],projectSelected:'',todoTasksList:[]}
+
+
+    componentDidMount = () => {
+        this.projectItemsFunctionAPI()
+        this.projectSelectedItemsAPI()
+    }
+
+    onSuccessGetProjectsItemsApi = (data) => {
+        this.setState({projectsItems: data,projectSelected: data[0].project_id})
+    }
+
+    projectItemsFunctionAPI =async () =>{
+        const url = "http://localhost:3000/projects"
+        const options = {
+          method: 'GET'
+        }
+        const response = await fetch(url, options)
+        const data = await response.json()
+        
+        if (response.ok) {
+          this.onSuccessGetProjectsItemsApi(data)
+        } else {
+          this.onFailureGetProjectsItemsApi()
+        }
+    }
+
+    onSuccessProjectSelectedTodos = (data)=>{
+        
+        this.setState({todoTasksList: data});
+    }
+
+
+    projectSelectedItemsAPI = async(projectId) =>{
+        const url = "http://localhost:3000/todo/33ac5b4f-b7d0-4b4a-8642-5a6be68a9c6d"
+        const options = {
+          method: 'GET'
+        }
+        const response = await fetch(url, options)
+        const data = await response.json()
+       
+        if (response.ok) {
+          this.onSuccessProjectSelectedTodos(data)
+        } else {
+          this.onFailureHomeApi()
+        }
+
+    }
+
+
+    projectClicked = (projectId) =>{
+        this.projectSelectedItemsAPI()
+    }
+
+
+
+    reactPopUpNewProject = () => {
+
+        return(
+          <Popup
+            modal
+            trigger={
+              <button type="button" className="text-blue-400 p-2 pl-4 text-xs">
+                + Add new Project
+              </button>
+            }
+          >
+            {close=>(
+                <div className="bg-white h-66  grid grid-rows-2 pt-6 pb-6 w-96 rounded-lg shadow-2xl">
+                   <div className="flex justify-between pl-4 pr-4 mb-4">
+                        <h1>Add new Project</h1>
+                        <RxCross1  onClick={() => close()} className="cursor-pointer" />
+                    </div>
+                    <hr className="bg-gray-400"/>
+                    <div className="pb-10 pl-4 pr-4">
+                        <form >
+                            <div>
+                                <label htmlFor="projectId" className="pb-4 font-large text-xs text-gray-600">Name of the Project</label>
+                                <input type="text" id="projectId" placeholder="Project" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                            </div>
+                            <div className="flex justify-end mt-3">
+                                <button type="button" className="text-blue-400 bg-blue-100 rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs" onClick={() => close()}>Cancel </button>
+                                <button type="button" className="text-white bg-blue-400 rounded-md p-1 pl-2 pr-2 font-medium text-xs">Add</button>
+                            </div>
+                        </form>
+                    </div>  
+                </div>
+            )}
+           
+          </Popup>
+       )
+    }
+
 
     render(){
+        const {projectsItems,todoTasksList} = this.state
+        console.log(todoTasksList,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+       
        
         return(
             <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
-                <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4">
+                <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
                     <img src="./../../../public/logo.png" alt="logo" className="h-6"/>
                     <h2 className="font-sans font-medium">Task boards</h2>
                 </div>
                 <div className="bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium">My Projects</div>
                     <div className="bg-gray-100 col-span-1 row-span-12  ">
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
-                            {projectItems.map(each=>(<ProjectItem key={each.id} details={each}/>))}
+                            
+                            {projectsItems.lenth===0 ? '' : projectsItems.map(each=>(
+                               
+                             <ProjectItem key={each.project_id} details={each}/>))}
+                        
                         </ul>
                         <hr/>
-                        <div>
-                            <button type="button" className="text-blue-400 p-2 pl-4 text-xs" >+ Add new Project</button>
-                        </div>
-                    </div>
-                <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5">
-                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each}/>))}
+                    <div>
+                        {this.reactPopUpNewProject()}
+                </div>
+                </div>
+                <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
+                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} projectClicked={this.projectClicked}/>))}
                 </ul>
             </div>
         )

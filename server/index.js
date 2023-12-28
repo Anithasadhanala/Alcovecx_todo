@@ -12,7 +12,6 @@ app.use(express.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
 
-
 const db = phpmyadmin.createPool({
     host: "localhost",
     user: "root",
@@ -24,32 +23,49 @@ const db = phpmyadmin.createPool({
 
 
 
-app.get('/projects', function (req, res) {
+app.get('/projects', function (request, response) {
 
-    
     const q = "select * from projects";
-    db.query(q,(err,ress)=>{
-        console.log(ress);   
+    db.query(q,(err,res)=>{
+        console.log(res); 
+        response.send(res)  
          
     })
 
 });
 
 
-app.get('/todos', function (req, res) {
+app.get('/todos', function (request, response) {
 
     const q = "select * from todo"
-    db.query(q,(err,ress)=>{
-    console.log(ress);
+    db.query(q,(err,res)=>{
+    console.log(res);
+    response.send(res);
   })
 });
 
 
-app.post('projects/add',function(req,res){
+app.get('/todo/:projectId', function (request, response) {
+  
+  const { projectId } = request.params;
+  console.log(projectId,"&&&&&&&&&&&&&&&");
+  const q = `select * from todo where project_id = "${projectId}";`
+  db.query(q,(err,res)=>{
+  console.log(res,"---------------");
+  response.send(res);
+})
+});
+
+
+
+
+
+app.post('projects/add',function(request,response){
     const uuid = uuidv4()
     const q = `insert into projects values("${uuid}","sai")`;
-    db.query(q,(err,ress)=>{
-        console.log(ress);    
+    db.query(q,(err,res)=>{
+        console.log(res);    
+        response.send(res)
     })
 
 });
