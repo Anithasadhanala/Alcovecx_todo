@@ -14,9 +14,6 @@ class ProjectItem extends Component {
         const {details,projectClicked} = this.props;
         const {project_name,project_id} = details
     
-        
-    
-        
 
         return(
 
