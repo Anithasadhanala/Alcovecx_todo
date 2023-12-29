@@ -19,7 +19,7 @@ const TodoItem = (props) => {
     const selectChanged = (event) => setterStatusName(event.target.value)
     
 
-    const {details,editedTodoRerender}= props
+    const {details,editedTodoRerender,deletedTodoRerender}= props
     const {task_name,start_time,end_time,task_status,todo_id} = details
 
     const [taskName,setterTaskName] = useState(task_name)
@@ -38,6 +38,10 @@ const TodoItem = (props) => {
 
     const onSubmitSuccessEditTodoTask = ()=>{
         editedTodoRerender()
+    }
+
+    const onSuccessTodoDeleted = ()=>{
+        deletedTodoRerender()
     }
 
 
@@ -68,8 +72,28 @@ const TodoItem = (props) => {
             } else {
                 onSubmitFailure()
             }
-
     }
+
+    const deleteTodoBtnClicked = async()=>{
+        const url = `http://localhost:3000/todo-delete/${todo_id}`
+          
+        const options = {
+            method: 'DELETE',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+
+        }
+        const response = await fetch(url, options)
+    
+        if (response.ok) {
+            onSuccessTodoDeleted()
+        } else {
+            onFailureHomeApi()
+        }
+    }
+
 
     const reactPopUpNewTodoTask = () => {
         
@@ -131,7 +155,6 @@ const TodoItem = (props) => {
             )}
           </Popup>
        )
-       
     }
 
 
@@ -139,7 +162,11 @@ const TodoItem = (props) => {
 
     return(
         <li className="mt-5 bg-white shadow-md rounded-lg p-3">
+            <div className="flex justify-between">
             <h1 className="text-xs font-medium mb-3" >{task_name}</h1>
+            <button type="button" onClick={deleteTodoBtnClicked} ><RxCross1 className="text-xs mr-3 text-gray-500 "/> </button>
+            
+            </div>
             <div className="flex ">
                 <div className="flex flex-col">
                     <p className="font-large text-xs text-gray-600 mb-2">StartDate</p>

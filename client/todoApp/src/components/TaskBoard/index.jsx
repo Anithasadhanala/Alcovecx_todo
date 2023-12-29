@@ -58,9 +58,13 @@ class TaskBoard extends Component {
             this.projectSelectedItemsAPI(data[0].project_id)
             this.setState({projectsItems: data,projectSelected: data[0].project_id,currentProject: projectNameforIndex0})    
         }
+        else{
+            this.setState({projectsItems:[],currentProject:''})
+        }
   }
 
     projectItemsFunctionAPI =async () =>{
+        console.log("UUUUUUUUUUUUUUUUUUUUUUUUU")
         const url = "http://localhost:3000/projects"
         const options = {
           method: 'GET'
@@ -175,7 +179,17 @@ class TaskBoard extends Component {
     searchChanged = (event) =>{
         this.setState({search : event.target.value})
     }
+
+    projectDeletedRerender = ()=>{
+        this.projectItemsFunctionAPI()
+    }
+
+    deletedTodoTaskRerender=(projectId)=>{
+        console.log("000000000000000000000000")
+        this.projectSelectedItemsAPI(projectId)
+    }
     
+  
 
     newtodoAddedRerender = (projectId)=> this.projectSelectedItemsAPI(projectId)
     
@@ -200,7 +214,9 @@ class TaskBoard extends Component {
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
                             
                             {projectsItems.lenth===0 ? '' : projectsItems.map(each=>(
-                             <ProjectItem key={each.project_id} details={each} projectClicked={this.projectClicked} applyStylingProject={projectSelected}/>))}
+                             <ProjectItem key={each.project_id} details={each} projectClicked={this.projectClicked} 
+                             applyStylingProject={projectSelected} projectDeletedRerender={this.projectDeletedRerender}
+                             />))}
                         </ul>
                         <hr/>
                     <div>
@@ -209,7 +225,8 @@ class TaskBoard extends Component {
                 </div>
                 <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
                     {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} 
-                    projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} searchTodo={search}/>))}
+                    projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} 
+                    deletedTodoTaskRerender={this.deletedTodoTaskRerender} searchTodo={search}/>))}
                 </ul>
             </div>
         )

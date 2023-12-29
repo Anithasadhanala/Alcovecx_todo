@@ -87,16 +87,41 @@ app.put('/todo-edit',function(request,response){
   let {taskName,startDate,endDate,taskStatus,todoId} = request.body;
   startDate = startDate.slice(0,10)
   endDate = endDate.slice(0,10)
-  console.log(request.body,"%%%%%%%%%%%%%%%%%%%%%%%")
-  console.log(taskName,"-----------------------")
+
   const q = `update  todo set task_name = "${taskName}", start_time = "${startDate}", end_time = "${endDate}",task_status = "${taskStatus}" where 
              todo_id = "${todoId}" ;`
 
-             console.log(q)
+  db.query(q,(err,res)=>{
+   response.send(res)
+  })
+});
+
+app.delete('/project-delete/:projectId', function (request, response) {
+  
+  const { projectId } = request.params;
+  const q = `delete from projects where project_id="${projectId}" ;`
+  const q2 = `delete from todo where project_id="${projectId}" ;`
+
   db.query(q,(err,res)=>{
     console.log(res)
-      response.send(res)
   })
+  db.query(q2,(err,res)=>{
+    console.log(res)
+  })
+  response.send("done")
+});
+
+app.delete('/todo-delete/:todoId', function (request, response) {
+  
+  const { todoId } = request.params;
+  
+  const q = `delete from todo where todo_id="${todoId}" ;`
+
+  db.query(q,(err,res)=>{
+    console.log(res)
+  })
+  
+  response.send("done")
 });
 
 

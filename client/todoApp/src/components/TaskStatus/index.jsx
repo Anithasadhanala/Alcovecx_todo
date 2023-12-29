@@ -11,7 +11,7 @@ const TaskStatus = (props) => {
     const [statusName,setterStatusName] = useState('inprogress')
     const [errEmptyData,setterErrorEmptyData] = useState(false)
 
-    const {details,todoTasks,projectSelected,newtodoAddedRerender} = props
+    const {details,todoTasks,projectSelected,newtodoAddedRerender,deletedTodoTaskRerender} = props
     const {name,color,bgColor,namedb} = details
 
     const status = color +  " " +bgColor+" font-medium text-xs  w-4/12 rounded-lg p-1 "
@@ -33,6 +33,9 @@ const TaskStatus = (props) => {
         newtodoAddedRerender(projectSelected)
     }
 
+    const deletedTodoRerender = ()=>{
+        deletedTodoTaskRerender(projectSelected)
+    }
    
 
     const todoTaskAddClicked =async () =>{
@@ -134,7 +137,7 @@ const TaskStatus = (props) => {
                                 <button type="button" className="text-blue-400 bg-blue-100 rounded-md p-2 pl-4 pr-4 mr-3 font-medium text-xs" onClick={() => close()}>Cancel </button>
                                 <button type="button" onClick={()=>{
                                     todoTaskAddClicked()
-                                    if(errEmptyData===true) close()
+                                    if(errEmptyData!==true) close()
 
                                 }
                                     
@@ -153,7 +156,8 @@ const TaskStatus = (props) => {
             <li className="flex flex-col bg-gray-100 p-5">
                 <h1 className={status} >&bull; {name}</h1>
                 <ul>
-                {todoListFiltered.length!==0 ? (todoListFiltered.map(each=>(<TodoItem details={each} key={each.todo_id} editedTodoRerender={editedTodoRerender}/>))) : ""}
+                {todoListFiltered.length!==0 ? (todoListFiltered.map(each=>(<TodoItem details={each} key={each.todo_id} 
+                editedTodoRerender={editedTodoRerender} deletedTodoRerender={deletedTodoRerender}/>))) : ""}
                 </ul>
                 {reactPopUpNewTodoTask()}
             </li>
