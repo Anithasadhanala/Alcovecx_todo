@@ -2,6 +2,7 @@ import {Component} from "react"
 import { v4 as uuidv4 } from 'uuid';
 import Popup from 'reactjs-popup'
 import { RxCross1 } from "react-icons/rx";
+import { IoIosSearch } from "react-icons/io";
 import ProjectItem from "../ProjectItem"
 import TaskStatus from "../TaskStatus"
 
@@ -16,7 +17,7 @@ const todoStatusItems = [
 
 class TaskBoard extends Component {
 
-    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false}
+    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false,currentProject:""}
 
     componentDidMount = () => {
         this.projectItemsFunctionAPI()
@@ -52,8 +53,10 @@ class TaskBoard extends Component {
 
     onSuccessGetProjectsItemsApi = (data) => {
         if(data!==undefined && data.length !== 0  ) {
+            let projectNameforIndex0 =data[0].project_name
+            
             this.projectSelectedItemsAPI(data[0].project_id)
-            this.setState({projectsItems: data,projectSelected: data[0].project_id})    
+            this.setState({projectsItems: data,projectSelected: data[0].project_id,currentProject: projectNameforIndex0})    
         }
   }
 
@@ -73,7 +76,19 @@ class TaskBoard extends Component {
     newProjectChanged = (event)=> this.setState({newProject: event.target.value})
     
 
-    projectClicked = (projectId) => this.projectSelectedItemsAPI(projectId)
+    projectClicked = (projectId) =>{
+
+        const {projectsItems} = this.state
+        let clickedProjectName=""
+
+        projectsItems.map(each=>{
+            if(each.project_id===projectId) clickedProjectName = each.project_name
+        })
+
+        this.setState({currentProject: clickedProjectName})
+
+        this.projectSelectedItemsAPI(projectId)
+    } 
     
 
     reactPopUpNewProject = () => {
@@ -85,8 +100,7 @@ class TaskBoard extends Component {
               <button type="button" className="text-blue-400 p-2 pl-4 text-xs">
                 + Add new Project
               </button>
-            }
-          >
+            }>
             {close=>(
                 <div className="bg-white h-66  grid grid-rows-2 pt-6 pb-6 w-96 rounded-lg shadow-2xl">
                    <div className="flex justify-between pl-4 pr-4 mb-4">
@@ -109,9 +123,7 @@ class TaskBoard extends Component {
                                         this.newProjectAddBtnClicked()
                                         if(newProject!=="") close()
                                     }
-                                   
-                                }
-                                    >Add</button>
+                                }>Add</button>
                             </div>
                         </form>
                     </div>  
@@ -123,8 +135,6 @@ class TaskBoard extends Component {
 
     onSubmitSuccessNewProject = ()=> this.projectItemsFunctionAPI()
     
-
-
 
     newProjectAddBtnClicked =async () =>{
 
@@ -146,7 +156,7 @@ class TaskBoard extends Component {
             }
             const response = await fetch(url, options)
             const data = await response.json()
-
+            
             if (response.ok === true) {
                 this.onSubmitSuccessNewProject(data)
             } else {
@@ -163,7 +173,8 @@ class TaskBoard extends Component {
     
 
     render(){
-        const {projectsItems,todoTasksList,projectSelected} = this.state
+        const {projectsItems,todoTasksList,projectSelected,currentProject} = this.state
+       
      
         return(
             <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
@@ -171,7 +182,11 @@ class TaskBoard extends Component {
                     <img src="./../../../public/logo.png" alt="logo" className="h-6"/>
                     <h2 className="font-sans font-medium">Task boards</h2>
                 </div>
-                <div className="bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium">My Projects</div>
+                <div className="bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium justify-around">
+                    <h1>My Projects / {currentProject}</h1>
+                <div className="flex bg-gray-300 rounded-md pr-3"><input type="search" className=" border-2  text-sm p-2 rounded-md rounded-r-none" placeholder="Search" />
+                <IoIosSearch className="mt-2 size-5 ml-1" /></div>
+                </div>
                     <div className="bg-gray-100 col-span-1 row-span-12  ">
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
                             
