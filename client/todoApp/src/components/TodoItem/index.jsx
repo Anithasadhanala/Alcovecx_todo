@@ -30,7 +30,7 @@ const TodoItem = (props) => {
                 </div>
             </div>
                 <div className="flex justify-start mt-4">
-                    <button type="button" className={dateStyling}>Edit</button>
+                    <button type="button" className="text-white bg-blue-400 rounded-lg  pr-3 pl-3  text-normal">Edit</button>
                 </div>
         </li>
     )

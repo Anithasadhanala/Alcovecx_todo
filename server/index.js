@@ -58,11 +58,9 @@ app.get('/todo/:projectId', function (request, response) {
 
 app.post('/project-add',function(request,response){
     const uuid = uuidv4()
-    const {projectDetails} = request.body;
-
-  const {newProject} = projectDetails
+    const {projectName} = request.body;
   
-    const q = `insert into projects values("${uuid}","${newProject}")`;
+    const q = `insert into projects values("${uuid}","${projectName}")`;
     db.query(q,(err,res)=>{
       console.log(res)  
         response.send(res)
@@ -72,17 +70,17 @@ app.post('/project-add',function(request,response){
 
 
 app.post('/todo-add',function(request,response){
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+  
   const uuid = uuidv4()
-  console.log(request)
-  const {projectDetails} = request.body;
-  conso
-  const {newProjectName} = projectDetails
-  console.log(request,"000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+  const {taskName,startDate,endDate,taskStatus,projectId} = request.body;
 
-  const q = `insert into projects values("${uuid}","${newProjectName}")`;
+
+  const q = `insert into todo values("${uuid}","${projectId}","${taskName}","${startDate}","${endDate}","${taskStatus}");`
+
+  console.log(q,"8888888888888888888888888888888888888888888888")
+
   db.query(q,(err,res)=>{
-    console.log(res)  
+    console.log(res,"==========================================")  
       response.send(res)
   })
 

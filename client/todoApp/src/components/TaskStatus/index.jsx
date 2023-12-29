@@ -1,11 +1,21 @@
 import Popup from 'reactjs-popup'
 import { RxCross1 } from "react-icons/rx";
+import { useState } from "react";
 import TodoItem from "../TodoItem"
 
 const TaskStatus = (props) => {
 
-    const {details,todoTasks} = props
+    const [taskName,setterTaskName] = useState('')
+    const [startTime,setterStartTime] = useState('')
+    const [endTime,setterEndTime]= useState('')
+    const [statusName,setterStatusName] = useState('inprogress')
+
+    const {details,todoTasks,projectSelected} = props
     const {name,color,bgColor,namedb} = details
+
+    const status = color +  " " +bgColor+" font-medium text-xs  w-4/12 rounded-lg p-1 "
+    const addBtn = color+" "+ bgColor + " mt-4 rounded-lg text-medium text-xs p-1"
+
     
     let todoListFiltered = [];
     if(todoTasks.length!==0){
@@ -15,8 +25,47 @@ const TaskStatus = (props) => {
     }
 
 
-    const status = color +  " " +bgColor+" font-medium text-xs  w-4/12 rounded-lg p-1 "
-    const addBtn = color+" "+ bgColor + " mt-4 rounded-lg text-medium text-xs p-1"
+   
+
+    const todoTaskAddClicked =async () =>{
+        const url = "http://localhost:3000/todo-add"
+        const options = {
+            method: 'POST',
+                
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+    
+            body: `{
+                "taskName" : "${taskName}",
+                "startDate" : "${startTime}",
+                "endDate" : "${endTime}",
+                "taskStatus" : "${statusName}",
+                "projectId" : "${projectSelected}"
+            }`,
+          }
+          const response = await fetch(url, options)
+          const data = await response.json()
+          
+          if (response.ok === true) {
+            this.onSubmitSuccessNewTaskTodo(data)
+          } else {
+            this.onSubmitFailure(data.error_msg)
+          }
+    }
+
+    const taskNameChanged = (event) => setterTaskName(event.target.value);
+    
+
+    const startTimeChanged =(event)=> setterStartTime(event.target.value);
+    
+
+    const endTimeChanged = (event)=> setterEndTime(event.target.value)
+    
+
+    const selectChanged = (event) => setterStatusName(event.target.value)
+    
 
 
     const reactPopUpNewTodoTask = () => {
@@ -43,32 +92,32 @@ const TaskStatus = (props) => {
                         <form >
                             <div>
                                 <label htmlFor="taskId" className="pb-4 font-large text-xs text-gray-600">Name of the Task</label>
-                                <input type="text" id="taskId" placeholder="Project" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                <input type="text" id="taskId" onChange={taskNameChanged} placeholder="Project" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
                             </div>
                             <div className="flex mt-3">
                                 <div className="mr-3">
                                     <label htmlFor="startDateId" className="pb-2 font-large text-xs text-gray-600">Start date</label>
-                                    <input type="Date" id="startDateId" placeholder="Date" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                    <input type="Date" id="startDateId" onChange={startTimeChanged} placeholder="Date" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
                                 </div>
                                 <div>
                                     <label htmlFor="endDateId" className="pb-2 font-large text-xs text-gray-600">End Date</label>
-                                    <input type="Date" id="endDateId" placeholder="Date" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                    <input type="Date" id="endDateId" placeholder="Date" onChange={endTimeChanged} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
                                 </div>
                             </div>
                             <div>
                                     <label htmlFor="statusId" className="pb-2 font-large text-xs text-gray-600">Status</label>
                                     <br/>
-                                    <select name="cars" id="statusId" placeholder="To DO" className="w-80 p-2 pr-2 border-2  border-gray-200 rounded-lg">
+                                    <select name="status" id="statusId" onChange={selectChanged} placeholder="To DO" className="w-80 p-2 pr-2 border-2  border-gray-200 rounded-lg">
 
-                                        <option value="volvo" className="text-pink-400 font-medium text-xs ">&bull; In Progress</option>
-                                        <option value="saab"  className="text-blue-400 font-medium text-xs">&bull; In Review</option>
-                                        <option value="mercedes"  className="text-green-400 font-medium text-xs">&bull; Completed</option>
+                                        <option value="inprogress" className="text-pink-400 font-medium text-xs" >&bull; In Progress</option>
+                                        <option value="inreview"  className="text-blue-400 font-medium text-xs">&bull; In Review</option>
+                                        <option value="completed"  className="text-green-400 font-medium text-xs">&bull; Completed</option>
                                       
                                         </select>
                                      </div>
                             <div className="flex justify-end mt-3">
                                 <button type="button" className="text-blue-400 bg-blue-100 rounded-md p-2 pl-4 pr-4 mr-3 font-medium text-xs" onClick={() => close()}>Cancel </button>
-                                <button type="button" className="text-white bg-blue-400 rounded-md p-2 pl-4 pr-4 font-medium text-xs">Add</button>
+                                <button type="button" onClick={todoTaskAddClicked} className="text-white bg-blue-400 rounded-md p-2 pl-4 pr-4 font-medium text-xs">Add</button>
                             </div>
                         </form>
                     </div>  

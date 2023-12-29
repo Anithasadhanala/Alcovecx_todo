@@ -56,9 +56,11 @@ class TaskBoard extends Component {
     }
 
     onSuccessGetProjectsItemsApi = (data) => {
-        this.projectSelectedItemsAPI(data[0].project_id)
-        this.setState({projectsItems: data,projectSelected: data[0].project_id})
-    }
+        if(data!==undefined && data.length !== 0  ) {
+            this.projectSelectedItemsAPI(data[0].project_id)
+            this.setState({projectsItems: data,projectSelected: data[0].project_id})    
+        }
+  }
 
     projectItemsFunctionAPI =async () =>{
         const url = "http://localhost:3000/projects"
@@ -68,16 +70,12 @@ class TaskBoard extends Component {
         const response = await fetch(url, options)
         const data = await response.json()
         
-        if (response.ok) {
-            
-          this.onSuccessGetProjectsItemsApi(data)
-        } else {
-          this.onFailureGetProjectsItemsApi()
-        }
+        if (response.ok)  this.onSuccessGetProjectsItemsApi(data)
+         else this.onFailureGetProjectsItemsApi()
+        
     }
 
     newProjectChanged = (event)=>{
-        console.log(0 )
         this.setState({newProject: event.target.value})
     }
 
@@ -111,7 +109,16 @@ class TaskBoard extends Component {
                             </div>
                             <div className="flex justify-end mt-3">
                                 <button type="button" className="text-blue-400 bg-blue-100 rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs" onClick={() => close()}>Cancel </button>
-                                <button type="button" className="text-white bg-blue-400 rounded-md p-1 pl-2 pr-2 font-medium text-xs" onClick={this.newProjectAddBtnClicked}>Add</button>
+                                <button type="button" className="text-white bg-blue-400 rounded-md p-1 pl-2 pr-2 font-medium text-xs" 
+                                onClick={
+                                    () =>{
+                                        
+                                        this.newProjectAddBtnClicked
+                                        close()
+                                    }
+                                   
+                                }
+                                    >Add</button>
                             </div>
                         </form>
                     </div>  
@@ -122,34 +129,33 @@ class TaskBoard extends Component {
     }
 
     onSubmitSuccessNewProject = ()=>{
-        console.log("inserted successfully")
+        this.projectItemsFunctionAPI()
     }
 
     newProjectAddBtnClicked =async () =>{
         const {newProject} = this.state
 
-
-        const url = 'http://localhost:3000/project-add'
-
-        
-      const  projectDetails = {newProjectName: newProject}
+        const url = "http://localhost:3000/project-add"
 
         const options = {
-          method: 'POST',
-          body: JSON.stringify(projectDetails),
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+
+            body: `{
+                "projectName" : "${newProject}"
+            }`,
         }
         const response = await fetch(url, options)
         const data = await response.json()
-        console.log(data)
+
         if (response.ok === true) {
           this.onSubmitSuccessNewProject(data)
         } else {
           this.onSubmitFailure(data.error_msg)
         }
-        
-
-
-
     }
 
 
@@ -175,7 +181,7 @@ class TaskBoard extends Component {
                 </div>
                 </div>
                 <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
-                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} />))}
+                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} projectSelected={projectSelected} />))}
                 </ul>
             </div>
         )
