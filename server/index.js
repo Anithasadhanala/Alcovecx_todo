@@ -48,58 +48,45 @@ app.get('/todos', function (request, response) {
 app.get('/todo/:projectId', function (request, response) {
   
   const { projectId } = request.params;
-  console.log(projectId,"&&&&&&&&&&&&&&&");
   const q = `select * from todo where project_id = "${projectId}";`
   db.query(q,(err,res)=>{
-  console.log(res,"---------------");
   response.send(res);
 })
 });
 
 
 
-
-
-app.post('projects/add',function(request,response){
+app.post('/project-add',function(request,response){
     const uuid = uuidv4()
-    const q = `insert into projects values("${uuid}","sai")`;
+    const {projectDetails} = request.body;
+
+  const {newProject} = projectDetails
+  
+    const q = `insert into projects values("${uuid}","${newProject}")`;
     db.query(q,(err,res)=>{
-        console.log(res);    
+      console.log(res)  
         response.send(res)
     })
 
 });
 
-app.post('todos/add',function(req,res){
 
-    const uuid = uuidv4();
-    const uuid_project = uuidv4();
-    const startTime =new Date()
-    const endTime = new Date()
-    console.log(startTime)
-    const q = `INSERT INTO todo values ("${uuid}","${uuid_project}","Anitha",'2002-07-26','2002-07-26',"review")`;
-  db.query(q,(err,ress)=>{
-    console.log(ress);
+app.post('/todo-add',function(request,response){
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+  const uuid = uuidv4()
+  console.log(request)
+  const {projectDetails} = request.body;
+  conso
+  const {newProjectName} = projectDetails
+  console.log(request,"000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+
+  const q = `insert into projects values("${uuid}","${newProjectName}")`;
+  db.query(q,(err,res)=>{
+    console.log(res)  
+      response.send(res)
   })
+
 });
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
 
 
 

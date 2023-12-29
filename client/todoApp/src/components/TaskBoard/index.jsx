@@ -20,14 +20,43 @@ const todoStatusItems = [
 
 class TaskBoard extends Component {
 
-    state = {projectsItems: [],projectSelected:'',todoTasksList:[]}
+    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: ''}
 
 
     componentDidMount = () => {
         this.projectItemsFunctionAPI()
     }
 
+    onSuccessProjectSelectedTodos = (data,projectId)=>{
+        if(data.length!==0){
+            this.setState({todoTasksList: data,projectSelected: data[0].project_id});
+        }
+        else{
+            this.setState({todoTasksList: data,projectSelected: projectId});
+        }
+    }
+
+    projectSelectedItemsAPI = async(projectId) =>{
+       
+        if(projectId!=='' && projectId!==undefined){
+            const url = `http://localhost:3000/todo/${projectId}`
+            const options = {
+            method: 'GET'
+            }
+            const response = await fetch(url, options)
+            const data = await response.json()
+        
+            if (response.ok) {
+
+            this.onSuccessProjectSelectedTodos(data,projectId)
+            } else {
+            this.onFailureHomeApi()
+            }
+        }
+    }
+
     onSuccessGetProjectsItemsApi = (data) => {
+        this.projectSelectedItemsAPI(data[0].project_id)
         this.setState({projectsItems: data,projectSelected: data[0].project_id})
     }
 
@@ -40,45 +69,21 @@ class TaskBoard extends Component {
         const data = await response.json()
         
         if (response.ok) {
+            
           this.onSuccessGetProjectsItemsApi(data)
         } else {
           this.onFailureGetProjectsItemsApi()
         }
     }
 
-    onSuccessProjectSelectedTodos = (data)=>{
-        if(data.length!==0){
-            this.setState({todoTasksList: data,projectSelected: data[0].project_id});
-        }
-        else{
-            this.setState({todoTasksList: data});
-        }
+    newProjectChanged = (event)=>{
+        console.log(0 )
+        this.setState({newProject: event.target.value})
     }
-
-
-    projectSelectedItemsAPI = async(projectId) =>{
-        if(projectId!=='' && projectId!==undefined){
-            const url = `http://localhost:3000/todo/${projectId}`
-            const options = {
-            method: 'GET'
-            }
-            const response = await fetch(url, options)
-            const data = await response.json()
-        
-            if (response.ok) {
-            this.onSuccessProjectSelectedTodos(data)
-            } else {
-            this.onFailureHomeApi()
-            }
-        }
-    }
-
 
     projectClicked = (projectId) =>{
         this.projectSelectedItemsAPI(projectId)
     }
-
-
 
     reactPopUpNewProject = () => {
 
@@ -102,25 +107,55 @@ class TaskBoard extends Component {
                         <form >
                             <div>
                                 <label htmlFor="projectId" className="pb-4 font-large text-xs text-gray-600">Name of the Project</label>
-                                <input type="text" id="projectId" placeholder="Project" className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                <input type="text" id="projectId" placeholder="Project" onChange={this.newProjectChanged} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
                             </div>
                             <div className="flex justify-end mt-3">
                                 <button type="button" className="text-blue-400 bg-blue-100 rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs" onClick={() => close()}>Cancel </button>
-                                <button type="button" className="text-white bg-blue-400 rounded-md p-1 pl-2 pr-2 font-medium text-xs">Add</button>
+                                <button type="button" className="text-white bg-blue-400 rounded-md p-1 pl-2 pr-2 font-medium text-xs" onClick={this.newProjectAddBtnClicked}>Add</button>
                             </div>
                         </form>
                     </div>  
                 </div>
             )}
-           
           </Popup>
        )
     }
 
+    onSubmitSuccessNewProject = ()=>{
+        console.log("inserted successfully")
+    }
+
+    newProjectAddBtnClicked =async () =>{
+        const {newProject} = this.state
+
+
+        const url = 'http://localhost:3000/project-add'
+
+        
+      const  projectDetails = {newProjectName: newProject}
+
+        const options = {
+          method: 'POST',
+          body: JSON.stringify(projectDetails),
+        }
+        const response = await fetch(url, options)
+        const data = await response.json()
+        console.log(data)
+        if (response.ok === true) {
+          this.onSubmitSuccessNewProject(data)
+        } else {
+          this.onSubmitFailure(data.error_msg)
+        }
+        
+
+
+
+    }
+
 
     render(){
-        const {projectsItems,todoTasksList} = this.state
-    
+        const {projectsItems,todoTasksList,projectSelected} = this.state
+     
         return(
             <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
                 <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
@@ -132,8 +167,7 @@ class TaskBoard extends Component {
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
                             
                             {projectsItems.lenth===0 ? '' : projectsItems.map(each=>(
-                             <ProjectItem key={each.project_id} details={each} projectClicked={this.projectClicked}/>))}
-                        
+                             <ProjectItem key={each.project_id} details={each} projectClicked={this.projectClicked} applyStylingProject={projectSelected}/>))}
                         </ul>
                         <hr/>
                     <div>

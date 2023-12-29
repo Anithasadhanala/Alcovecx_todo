@@ -1,27 +1,27 @@
-import {Component} from 'react'
+import { useState } from "react"
 
-class ProjectItem extends Component {
+const  ProjectItem = (props) => {
 
-     styling =" w-100 rounded-lg"
-    projectSelectedCalled = () =>{
-        styling = "w-100 bg-slate-200 rounded-lg"
+   
+    const {details,projectClicked,applyStylingProject} = props;
+    const {project_name,project_id} = details
+
+    let styling = "w-100 rounded-lg"
+
+    if(applyStylingProject===project_id) styling = "w-100 bg-slate-200 rounded-lg"
+
+    
+    const projectSelectedCalled = () =>{
         projectClicked(project_id)
     }
 
-    render(){
     
-   
-        const {details,projectClicked} = this.props;
-        const {project_name,project_id} = details
-    
-
         return(
-
             <li className={styling}>
-                <button type="button" className="p-2 flex justify-start text-start w-100 font-sans font-normal" onClick={this.projectSelectedCalled}>{project_name}</button>
+                <button type="button" className="p-2 flex justify-start text-start w-100 font-sans font-normal" onClick={projectSelectedCalled}>{project_name}</button>
             </li>
         )
-    }
 }
+
 
 export default ProjectItem
