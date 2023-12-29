@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require("cors")
 const path = require('path')
 const { v4: uuidv4 } = require('uuid');
+const { start } = require('repl');
 
 
 app.use(cors())
@@ -73,18 +74,31 @@ app.post('/todo-add',function(request,response){
   
   const uuid = uuidv4()
   const {taskName,startDate,endDate,taskStatus,projectId} = request.body;
-
-
   const q = `insert into todo values("${uuid}","${projectId}","${taskName}","${startDate}","${endDate}","${taskStatus}");`
-
-  console.log(q,"8888888888888888888888888888888888888888888888")
-
   db.query(q,(err,res)=>{
-    console.log(res,"==========================================")  
       response.send(res)
   })
-
 });
+
+
+app.put('/todo-edit',function(request,response){
+  
+  const uuid = uuidv4()
+  let {taskName,startDate,endDate,taskStatus,todoId} = request.body;
+  startDate = startDate.slice(0,10)
+  endDate = endDate.slice(0,10)
+  console.log(request.body,"%%%%%%%%%%%%%%%%%%%%%%%")
+  console.log(taskName,"-----------------------")
+  const q = `update  todo set task_name = "${taskName}", start_time = "${startDate}", end_time = "${endDate}",task_status = "${taskStatus}" where 
+             todo_id = "${todoId}" ;`
+
+             console.log(q)
+  db.query(q,(err,res)=>{
+    console.log(res)
+      response.send(res)
+  })
+});
+
 
 
 

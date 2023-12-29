@@ -25,16 +25,18 @@ const TaskStatus = (props) => {
     }
 
     const onSubmitSuccessNewTaskTodo = () =>{
-        console.log("&&&&&&&&&&&&")
+        
         newtodoAddedRerender(projectSelected)
     }
 
+    const editedTodoRerender = ()=> {
+        newtodoAddedRerender(projectSelected)
+    }
 
    
 
     const todoTaskAddClicked =async () =>{
 
-        console.log(1111111111111111111111111)
         if(taskName!=='' && startTime!=='' && endTime!==''){
             
             const url = "http://localhost:3000/todo-add"
@@ -66,7 +68,7 @@ const TaskStatus = (props) => {
         else{
             setterErrorEmptyData(true)
         }
-        console.log(333333333333333333)
+        
     }
 
     const taskNameChanged = (event) => setterTaskName(event.target.value);
@@ -151,7 +153,7 @@ const TaskStatus = (props) => {
             <li className="flex flex-col bg-gray-100 p-5">
                 <h1 className={status} >&bull; {name}</h1>
                 <ul>
-                {todoListFiltered.length!==0 ? (todoListFiltered.map(each=>(<TodoItem details={each} key={each.todo_id}/>))) : ""}
+                {todoListFiltered.length!==0 ? (todoListFiltered.map(each=>(<TodoItem details={each} key={each.todo_id} editedTodoRerender={editedTodoRerender}/>))) : ""}
                 </ul>
                 {reactPopUpNewTodoTask()}
             </li>

@@ -1,6 +1,5 @@
 
 const  ProjectItem = (props) => {
-
    
     const {details,projectClicked,applyStylingProject} = props;
     const {project_name,project_id} = details
