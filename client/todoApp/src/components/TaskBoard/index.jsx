@@ -17,7 +17,7 @@ const todoStatusItems = [
 
 class TaskBoard extends Component {
 
-    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false,currentProject:""}
+    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false,currentProject:"",search:''}
 
     componentDidMount = () => {
         this.projectItemsFunctionAPI()
@@ -167,15 +167,22 @@ class TaskBoard extends Component {
             this.setState({errProjectPara: true})
         }
     }
+
+    searchBtnClicked = () =>{
+        //to be implemented
+    }
+
+    searchChanged = (event) =>{
+        this.setState({search : event.target.value})
+    }
     
 
     newtodoAddedRerender = (projectId)=> this.projectSelectedItemsAPI(projectId)
     
 
     render(){
-        const {projectsItems,todoTasksList,projectSelected,currentProject} = this.state
+        const {projectsItems,todoTasksList,projectSelected,currentProject,search} = this.state
        
-     
         return(
             <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
                 <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
@@ -184,8 +191,10 @@ class TaskBoard extends Component {
                 </div>
                 <div className="bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium justify-around">
                     <h1>My Projects / {currentProject}</h1>
-                <div className="flex bg-gray-300 rounded-md pr-3"><input type="search" className=" border-2  text-sm p-2 rounded-md rounded-r-none" placeholder="Search" />
-                <IoIosSearch className="mt-2 size-5 ml-1" /></div>
+                <div className="flex bg-gray-300 rounded-md pr-3">
+                    <input type="search" className=" border-2  text-sm p-2 rounded-md rounded-r-none" placeholder="Search" onChange={this.searchChanged} />
+                    <button type="button" onClick={this.searchBtnClicked} className="p-0"><IoIosSearch className=" size-5 ml-1 mt-0 pt-0 " /></button>
+                </div>
                 </div>
                     <div className="bg-gray-100 col-span-1 row-span-12  ">
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
@@ -199,7 +208,8 @@ class TaskBoard extends Component {
                 </div>
                 </div>
                 <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
-                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} />))}
+                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} 
+                    projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} searchTodo={search}/>))}
                 </ul>
             </div>
         )

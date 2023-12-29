@@ -29,17 +29,23 @@ const TaskStatus = (props) => {
         newtodoAddedRerender(projectSelected)
     }
 
+
+   
+
     const todoTaskAddClicked =async () =>{
 
+        console.log(1111111111111111111111111)
         if(taskName!=='' && startTime!=='' && endTime!==''){
             
             const url = "http://localhost:3000/todo-add"
             const options = {
                 method: 'POST',
+                    
                 headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
                 },
+        
                 body: `{
                     "taskName" : "${taskName}",
                     "startDate" : "${startTime}",
@@ -60,13 +66,21 @@ const TaskStatus = (props) => {
         else{
             setterErrorEmptyData(true)
         }
+        console.log(333333333333333333)
     }
 
     const taskNameChanged = (event) => setterTaskName(event.target.value);
+    
+
     const startTimeChanged =(event)=> setterStartTime(event.target.value);
+    
+
     const endTimeChanged = (event)=> setterEndTime(event.target.value)
+    
+
     const selectChanged = (event) => setterStatusName(event.target.value)
     
+
 
     const reactPopUpNewTodoTask = () => {
         
@@ -119,6 +133,7 @@ const TaskStatus = (props) => {
                                 <button type="button" onClick={()=>{
                                     todoTaskAddClicked()
                                     if(errEmptyData===true) close()
+
                                 }
                                     
                                     } className="text-white bg-blue-400 rounded-md p-2 pl-4 pr-4 font-medium text-xs">Add</button>
@@ -131,7 +146,7 @@ const TaskStatus = (props) => {
        )
        
     }
-   
+
     return(
             <li className="flex flex-col bg-gray-100 p-5">
                 <h1 className={status} >&bull; {name}</h1>
