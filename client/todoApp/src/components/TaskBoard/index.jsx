@@ -14,14 +14,9 @@ const todoStatusItems = [
 ];
 
 
-
-
-
-
 class TaskBoard extends Component {
 
-    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: ''}
-
+    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false}
 
     componentDidMount = () => {
         this.projectItemsFunctionAPI()
@@ -75,16 +70,14 @@ class TaskBoard extends Component {
         
     }
 
-    newProjectChanged = (event)=>{
-        this.setState({newProject: event.target.value})
-    }
+    newProjectChanged = (event)=> this.setState({newProject: event.target.value})
+    
 
-    projectClicked = (projectId) =>{
-        this.projectSelectedItemsAPI(projectId)
-    }
+    projectClicked = (projectId) => this.projectSelectedItemsAPI(projectId)
+    
 
     reactPopUpNewProject = () => {
-
+        const {errProjectPara,newProject} =this.state
         return(
           <Popup
             modal
@@ -105,16 +98,16 @@ class TaskBoard extends Component {
                         <form >
                             <div>
                                 <label htmlFor="projectId" className="pb-4 font-large text-xs text-gray-600">Name of the Project</label>
-                                <input type="text" id="projectId" placeholder="Project" onChange={this.newProjectChanged} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                <input type="text" id="projectId"  placeholder="Project" onChange={this.newProjectChanged} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg" required/>
+                                {errProjectPara ? <p className="text-red-400 text-xs font-sans text-normal">Please Enter the Project!!</p>: ""}
                             </div>
                             <div className="flex justify-end mt-3">
                                 <button type="button" className="text-blue-400 bg-blue-100 rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs" onClick={() => close()}>Cancel </button>
                                 <button type="button" className="text-white bg-blue-400 rounded-md p-1 pl-2 pr-2 font-medium text-xs" 
                                 onClick={
                                     () =>{
-                                        
-                                        this.newProjectAddBtnClicked
-                                        close()
+                                        this.newProjectAddBtnClicked()
+                                        if(newProject!=="") close()
                                     }
                                    
                                 }
@@ -128,36 +121,46 @@ class TaskBoard extends Component {
        )
     }
 
-    onSubmitSuccessNewProject = ()=>{
-        this.projectItemsFunctionAPI()
-    }
+    onSubmitSuccessNewProject = ()=> this.projectItemsFunctionAPI()
+    
+
+
 
     newProjectAddBtnClicked =async () =>{
+
         const {newProject} = this.state
 
-        const url = "http://localhost:3000/project-add"
+        if(newProject!==''){
+            const url = "http://localhost:3000/project-add"
 
-        const options = {
-            method: 'POST',
-            headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-            },
+            const options = {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
 
-            body: `{
-                "projectName" : "${newProject}"
-            }`,
-        }
-        const response = await fetch(url, options)
-        const data = await response.json()
+                body: `{
+                    "projectName" : "${newProject}"
+                }`,
+            }
+            const response = await fetch(url, options)
+            const data = await response.json()
 
-        if (response.ok === true) {
-          this.onSubmitSuccessNewProject(data)
-        } else {
-          this.onSubmitFailure(data.error_msg)
+            if (response.ok === true) {
+                this.onSubmitSuccessNewProject(data)
+            } else {
+                this.onSubmitFailure(data.error_msg)
+            }
+        } 
+        else{
+            this.setState({errProjectPara: true})
         }
     }
+    
 
+    newtodoAddedRerender = (projectId)=> this.projectSelectedItemsAPI(projectId)
+    
 
     render(){
         const {projectsItems,todoTasksList,projectSelected} = this.state
@@ -181,7 +184,7 @@ class TaskBoard extends Component {
                 </div>
                 </div>
                 <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
-                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} projectSelected={projectSelected} />))}
+                    {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} />))}
                 </ul>
             </div>
         )
