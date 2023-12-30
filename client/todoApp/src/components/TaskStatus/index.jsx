@@ -28,7 +28,10 @@ const TaskStatus = (props) => {
 
     
     //after new todo addition, todo API in TaskBoard is called for re-rendering
-    const onSubmitSuccessNewTaskTodo = () => newtodoAddedRerender(projectSelected)
+    const onSubmitSuccessNewTaskTodo = () =>{
+        alert("The new task is added")
+        newtodoAddedRerender(projectSelected)
+    }
     
 
     //after editing todo, below function re-renders
@@ -54,7 +57,7 @@ const TaskStatus = (props) => {
                     "taskName" : "${taskName}",
                     "startDate" : "${startTime}",
                     "endDate" : "${endTime}",
-                    "taskStatus" : "${statusName}",
+                    "taskStatus" : "${namedb}",
                     "projectId" : "${projectSelected}"
                 }`,
             }
@@ -123,10 +126,8 @@ const TaskStatus = (props) => {
                                 <label htmlFor="statusId" className="pb-2 font-large text-xs text-gray-600">Status</label>
                                 <br/>
                                 <select name="status" id="statusId" onChange={selectChanged} placeholder="To DO" className="w-80 p-2 pr-2 border-2  border-gray-200 rounded-lg">
-                                    <option value="inprogress" className="text-pink-400 font-medium text-xs" >&bull; In Progress</option>
-                                    <option value="inreview"  className="text-blue-400 font-medium text-xs">&bull; In Review</option>
-                                    <option value="completed"  className="text-green-400 font-medium text-xs">&bull; Completed</option>
-                                </select>
+                                    <option value={namedb} className="text-pink-400 font-medium text-xs" >&bull; {name}</option>
+                             </select>
                                 {errEmptyData ? <p className="text-red-400 text-xs font-sans text-normal">Please Enter all Todo Details!!</p> : "" }
                             </div>
                             <div className="flex justify-end mt-3">
@@ -134,6 +135,7 @@ const TaskStatus = (props) => {
                                 <button type="button" onClick={()=>{
                                     todoTaskAddClicked()
                                     if(errEmptyData!==true) close()
+                                   
                                 }  
                                     } className="text-white bg-blue-400 rounded-md p-2 pl-4 pr-4 font-medium text-xs">Add</button>
                             </div>

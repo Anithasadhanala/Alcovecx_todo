@@ -48,11 +48,17 @@ const TodoItem = (props) => {
 
 
     //function that calls todo re-render after successfull edition
-    const onSubmitSuccessEditTodoTask = ()=> editedTodoRerender()
+    const onSubmitSuccessEditTodoTask = ()=>{
+        editedTodoRerender()
+        alert(taskName+ " in " + task_status +" stated task is Edited Successfully!!!") 
+    }
     
 
     //function that calls todo re-render after successfull deletion
-    const onSuccessTodoDeleted = ()=> deletedTodoRerender()
+    const onSuccessTodoDeleted = ()=> {
+        deletedTodoRerender()
+        alert(taskName +" in "+task_status+ " stated task is Deleted Successfully!!!")
+    }
     
 
     //function that updated the todo
