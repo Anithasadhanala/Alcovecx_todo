@@ -7,6 +7,7 @@ import ProjectItem from "../ProjectItem"
 import TaskStatus from "../TaskStatus"
 
 
+// todo status details, add more if necessary!!
 const todoStatusItems = [
     {id: uuidv4(),name : "To Do",namedb:"todo", color: "text-blue-600",bgColor : "bg-blue-100"},
     {id: uuidv4(),name : "In Progress",namedb:"inprogress", color: "text-pink-400",bgColor : "bg-pink-100"},
@@ -17,55 +18,58 @@ const todoStatusItems = [
 
 class TaskBoard extends Component {
 
+    // state object that holds the initial values
     state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false,currentProject:"",search:''}
 
-    componentDidMount = () => {
-        this.projectItemsFunctionAPI()
-    }
 
+    //Build in function that calls the below function as the page loads
+    componentDidMount = () =>  this.projectItemsFunctionAPI()
+    
+
+
+    //function that triggers when a project is opted from the list
     onSuccessProjectSelectedTodos = (data,projectId)=>{
-        if(data.length!==0){
-            this.setState({todoTasksList: data,projectSelected: data[0].project_id});
-        }
-        else{
-            this.setState({todoTasksList: data,projectSelected: projectId});
-        }
+        if(data.length!==0) this.setState({todoTasksList: data,projectSelected: data[0].project_id});
+        else this.setState({todoTasksList: data,projectSelected: projectId});
     }
 
+
+    //function that get all todo tasks details from TODO table with a given projectId
     projectSelectedItemsAPI = async(projectId) =>{
        
         if(projectId!=='' && projectId!==undefined){
-            const url = `http://localhost:3000/todo/${projectId}`
+            const url = `https://alcovex-todotask-anitha.onrender.com/todo/${projectId}`
             const options = {
             method: 'GET'
             }
             const response = await fetch(url, options)
             const data = await response.json()
-        
+    
             if (response.ok) {
 
             this.onSuccessProjectSelectedTodos(data,projectId)
             } else {
-            this.onFailureHomeApi()
+            this.onFailureProjectSelectedTodos()
             }
         }
     }
 
+    //function triggers when fetching projects details from table is successfull
     onSuccessGetProjectsItemsApi = (data) => {
+
         if(data!==undefined && data.length !== 0  ) {
             let projectNameforIndex0 =data[0].project_name
-            
             this.projectSelectedItemsAPI(data[0].project_id)
             this.setState({projectsItems: data,projectSelected: data[0].project_id,currentProject: projectNameforIndex0})    
         }
-        else{
-            this.setState({projectsItems:[],currentProject:''})
-        }
-  }
+        else this.setState({projectsItems:[],currentProject:''})
+    }
 
+
+    //function that gets all the project details from the PROJECTS table
     projectItemsFunctionAPI =async () =>{
-        console.log("UUUUUUUUUUUUUUUUUUUUUUUUU")
-        const url = "http://localhost:3000/projects"
+        
+        const url = "https://alcovex-todotask-anitha.onrender.com/projects"
         const options = {
           method: 'GET'
         }
@@ -73,13 +77,14 @@ class TaskBoard extends Component {
         const data = await response.json()
         
         if (response.ok)  this.onSuccessGetProjectsItemsApi(data)
-         else this.onFailureGetProjectsItemsApi()
-        
+        else this.onFailureGetProjectsItemsApi()
     }
 
+    //function triggers when a new project opted
     newProjectChanged = (event)=> this.setState({newProject: event.target.value})
     
 
+    //function that gives the opted project name
     projectClicked = (projectId) =>{
 
         const {projectsItems} = this.state
@@ -88,13 +93,12 @@ class TaskBoard extends Component {
         projectsItems.map(each=>{
             if(each.project_id===projectId) clickedProjectName = each.project_name
         })
-
         this.setState({currentProject: clickedProjectName})
-
         this.projectSelectedItemsAPI(projectId)
     } 
     
 
+    //function that give popup for adding new project
     reactPopUpNewProject = () => {
         const {errProjectPara,newProject} =this.state
         return(
@@ -137,23 +141,23 @@ class TaskBoard extends Component {
        )
     }
 
+    //called when a project is added successfully and calls below function for immediate re-rendering
     onSubmitSuccessNewProject = ()=> this.projectItemsFunctionAPI()
     
 
+    //function to add a new project into the table PROJECTS
     newProjectAddBtnClicked =async () =>{
 
         const {newProject} = this.state
 
         if(newProject!==''){
-            const url = "http://localhost:3000/project-add"
-
+            const url = "https://alcovex-todotask-anitha.onrender.com/project-add"
             const options = {
                 method: 'POST',
                 headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
                 },
-
                 body: `{
                     "projectName" : "${newProject}"
                 }`,
@@ -161,36 +165,30 @@ class TaskBoard extends Component {
             const response = await fetch(url, options)
             const data = await response.json()
             
-            if (response.ok === true) {
-                this.onSubmitSuccessNewProject(data)
-            } else {
-                this.onSubmitFailure(data.error_msg)
-            }
+            if (response.ok === true) this.onSubmitSuccessNewProject(data)
+            else  this.onSubmitFailure(data.error_msg)
         } 
-        else{
-            this.setState({errProjectPara: true})
-        }
+        else this.setState({errProjectPara: true})
     }
 
     searchBtnClicked = () =>{
         //to be implemented
     }
 
+    
     searchChanged = (event) =>{
         this.setState({search : event.target.value})
     }
 
-    projectDeletedRerender = ()=>{
-        this.projectItemsFunctionAPI()
-    }
+    //after deleting a project, below func re-renders
+    projectDeletedRerender = ()=> this.projectItemsFunctionAPI()
+    
 
-    deletedTodoTaskRerender=(projectId)=>{
-        console.log("000000000000000000000000")
-        this.projectSelectedItemsAPI(projectId)
-    }
+    //after deleting a todo task, below func re-renders 
+    deletedTodoTaskRerender=(projectId)=> this.projectSelectedItemsAPI(projectId)
     
   
-
+    //after adding a new todo, below function re-renders
     newtodoAddedRerender = (projectId)=> this.projectSelectedItemsAPI(projectId)
     
 
@@ -200,7 +198,7 @@ class TaskBoard extends Component {
         return(
             <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
                 <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
-                    <img src="./../../../public/logo.png" alt="logo" className="h-6"/>
+                    <img src="./logo.png" alt="logo" className="h-6"/>
                     <h2 className="font-sans font-medium">Task boards</h2>
                 </div>
                 <div className="bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium justify-around">

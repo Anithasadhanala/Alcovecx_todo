@@ -11,9 +11,11 @@ const TaskStatus = (props) => {
     const [statusName,setterStatusName] = useState('inprogress')
     const [errEmptyData,setterErrorEmptyData] = useState(false)
 
+    //destructing the props
     const {details,todoTasks,projectSelected,newtodoAddedRerender,deletedTodoTaskRerender} = props
     const {name,color,bgColor,namedb} = details
 
+    //chaging styles according to props received
     const status = color +  " " +bgColor+" font-medium text-xs  w-4/12 rounded-lg p-1 "
     const addBtn = color+" "+ bgColor + " mt-4 rounded-lg text-medium text-xs p-1"
     
@@ -24,33 +26,30 @@ const TaskStatus = (props) => {
         }
     }
 
-    const onSubmitSuccessNewTaskTodo = () =>{
-        
-        newtodoAddedRerender(projectSelected)
-    }
+    
+    //after new todo addition, todo API in TaskBoard is called for re-rendering
+    const onSubmitSuccessNewTaskTodo = () => newtodoAddedRerender(projectSelected)
+    
 
-    const editedTodoRerender = ()=> {
-        newtodoAddedRerender(projectSelected)
-    }
+    //after editing todo, below function re-renders
+    const editedTodoRerender = ()=> newtodoAddedRerender(projectSelected)
+    
 
-    const deletedTodoRerender = ()=>{
-        deletedTodoTaskRerender(projectSelected)
-    }
+    //after deleting a todo, todo API in TaskBoard is called for re-rendering
+    const deletedTodoRerender = ()=> deletedTodoTaskRerender(projectSelected)
+    
    
-
+    //function that adds a new todo in TODO table
     const todoTaskAddClicked =async () =>{
 
         if(taskName!=='' && startTime!=='' && endTime!==''){
-            
-            const url = "http://localhost:3000/todo-add"
+            const url = "https://alcovex-todotask-anitha.onrender.com/todo-add"
             const options = {
                 method: 'POST',
-                    
                 headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
                 },
-        
                 body: `{
                     "taskName" : "${taskName}",
                     "startDate" : "${startTime}",
@@ -62,31 +61,30 @@ const TaskStatus = (props) => {
             const response = await fetch(url, options)
             const data = await response.json()
             
-            if (response.ok) {
-                onSubmitSuccessNewTaskTodo()
-            } else {
-                onSubmitFailure(data.error_msg)
-            }
+            if (response.ok) onSubmitSuccessNewTaskTodo()
+            else onSubmitFailure(data.error_msg)
         }
-        else{
-            setterErrorEmptyData(true)
-        }
-        
+        else setterErrorEmptyData(true)
     }
 
+
+    //while task is changed, the data is updated here
     const taskNameChanged = (event) => setterTaskName(event.target.value);
     
 
+    //while startTime is changed, the data is updated here
     const startTimeChanged =(event)=> setterStartTime(event.target.value);
     
 
+    //while endTime is changed, the data is updated here
     const endTimeChanged = (event)=> setterEndTime(event.target.value)
     
 
+    //while status is changed, the data is updated here
     const selectChanged = (event) => setterStatusName(event.target.value)
     
 
-
+    //function that popsup the add new task form
     const reactPopUpNewTodoTask = () => {
         
         return(
@@ -104,9 +102,7 @@ const TaskStatus = (props) => {
                         <h1 className="">Add new Task</h1>
                         <RxCross1  onClick={() => close()} className="cursor-pointer" />
                     </div>
-
                     <hr className="bg-gray-400"/>
-                
                     <div className="pb-10 pl-4 pr-4">
                         <form >
                             <div>
@@ -138,9 +134,7 @@ const TaskStatus = (props) => {
                                 <button type="button" onClick={()=>{
                                     todoTaskAddClicked()
                                     if(errEmptyData!==true) close()
-
-                                }
-                                    
+                                }  
                                     } className="text-white bg-blue-400 rounded-md p-2 pl-4 pr-4 font-medium text-xs">Add</button>
                             </div>
                         </form>
@@ -149,7 +143,6 @@ const TaskStatus = (props) => {
             )}
           </Popup>
        )
-       
     }
 
     return(

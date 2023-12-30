@@ -2,60 +2,69 @@ import Popup from 'reactjs-popup'
 import { RxCross1 } from "react-icons/rx";
 import { useState } from "react"
 
+
+
 const TodoItem = (props) => {
 
 
-
-    
+    //while chaging the task, the data is updated here
     const taskNameChanged = (event) => setterTaskName(event.target.value);
     
 
+    //while chaging the startTime, the data is updated here
     const startTimeChanged =(event)=> setterStartTime(event.target.value.slice(0,10));
     
 
+    //while chaging the endTime, the data is updated here
     const endTimeChanged = (event)=> setterEndTime(event.target.value.slice(0,10))
     
 
+    //while chaging the status, the data is updated here
     const selectChanged = (event) => setterStatusName(event.target.value)
     
 
+    //destructing the props here
     const {details,editedTodoRerender,deletedTodoRerender}= props
-    const {task_name,start_time,end_time,task_status,todo_id} = details
+    const {todo_name,start_time,end_time,task_status,todo_id} = details
 
-    const [taskName,setterTaskName] = useState(task_name)
+
+    //react-hooks for preserving the state changing and re-rendering
+    const [taskName,setterTaskName] = useState(todo_name)
     const [startTime,setterStartTime] = useState(start_time)
     const [endTime,setterEndTime]= useState(end_time)
     const [statusName,setterStatusName] = useState(task_status)
 
+    
+    //making the dates into single format
     const startDate = start_time.slice(0,10)
     const endDate = end_time.slice(0,10)
 
+
+    //changing styling according to the props received
     let dateStyling = "rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs"
- 
     if(task_status==="inprogress") dateStyling = "rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs bg-pink-100 text-pink-400"
     else if(task_status==="inreview") dateStyling = "rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs bg-blue-100 text-blue-400"
     else dateStyling = "rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs bg-green-100 text-green-400"
 
-    const onSubmitSuccessEditTodoTask = ()=>{
-        editedTodoRerender()
-    }
 
-    const onSuccessTodoDeleted = ()=>{
-        deletedTodoRerender()
-    }
+    //function that calls todo re-render after successfull edition
+    const onSubmitSuccessEditTodoTask = ()=> editedTodoRerender()
+    
 
+    //function that calls todo re-render after successfull deletion
+    const onSuccessTodoDeleted = ()=> deletedTodoRerender()
+    
 
+    //function that updated the todo
      const EditBtnClicked =async () =>{
 
-        const url = "http://localhost:3000/todo-edit"
+        const url = "https://alcovex-todotask-anitha.onrender.com/todo-edit"
             const options = {
                 method: 'PUT',
-                    
                 headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
                 },
-        
                 body: `{
                     "taskName" : "${taskName}",
                     "startDate" : "${startTime}",
@@ -66,35 +75,30 @@ const TodoItem = (props) => {
             }
             const response = await fetch(url, options)
             
-            
-            if (response.ok) {
-                onSubmitSuccessEditTodoTask()
-            } else {
-                onSubmitFailure()
-            }
+            if (response.ok) onSubmitSuccessEditTodoTask()
+            else onSubmitFailure() 
     }
 
+
+    //function that deleted the todo
     const deleteTodoBtnClicked = async()=>{
-        const url = `http://localhost:3000/todo-delete/${todo_id}`
-          
+
+        const url = `https://alcovex-todotask-anitha.onrender.com/todo-delete/${todo_id}`
         const options = {
             method: 'DELETE',
             headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
             },
-
         }
         const response = await fetch(url, options)
     
-        if (response.ok) {
-            onSuccessTodoDeleted()
-        } else {
-            onFailureHomeApi()
-        }
+        if (response.ok) onSuccessTodoDeleted()
+        else onFailureHomeApi()
     }
 
 
+    //function that popsup an editing form
     const reactPopUpNewTodoTask = () => {
         
         return(
@@ -163,7 +167,7 @@ const TodoItem = (props) => {
     return(
         <li className="mt-5 bg-white shadow-md rounded-lg p-3">
             <div className="flex justify-between">
-            <h1 className="text-xs font-medium mb-3" >{task_name}</h1>
+            <h1 className="text-xs font-medium mb-3" >{taskName}</h1>
             <button type="button" onClick={deleteTodoBtnClicked} ><RxCross1 className="text-xs mr-3 text-gray-500 "/> </button>
             
             </div>
