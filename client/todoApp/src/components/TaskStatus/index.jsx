@@ -155,6 +155,7 @@ const TaskStatus = (props) => {
                 editedTodoRerender={editedTodoRerender} deletedTodoRerender={deletedTodoRerender}/>))) : ""}
                 </ul>
                 {reactPopUpNewTodoTask()}
+                
             </li>
     )
 }

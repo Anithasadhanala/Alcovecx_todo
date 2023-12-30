@@ -196,19 +196,19 @@ class TaskBoard extends Component {
         const {projectsItems,todoTasksList,projectSelected,currentProject,search} = this.state
        
         return(
-            <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200  ">
-                <div className="bg-gray-100  s col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
+            <div className="grid  h-screen w-screen grid-cols-6 grid-flow-row gap-0.5 bg-slate-200 ">
+                <div className=" bg-gray-100  col-span-1  flex justify-start items-center gap-x-2 pl-4 p-6">
                     <img src="./logo.png" alt="logo" className="h-6"/>
-                    <h2 className="font-sans font-medium">Task boards</h2>
+                    <h2 className="font-sans font-medium flex  max-md:hidden">Task boards</h2>
                 </div>
-                <div className="bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium justify-around">
-                    <h1>My Projects / {currentProject}</h1>
-                <div className="flex bg-gray-300 rounded-md pr-3">
+                <div className="  bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium justify-around">
+                    <h1 className=" flex  max-md:hidden ">pMy9 Projects / {currentProject}</h1>
+                    <div className="flex bg-gray-300 rounded-md pr-3">
                     <input type="search" className=" border-2  text-sm p-2 rounded-md rounded-r-none" placeholder="Search" onChange={this.searchChanged} />
                     <button type="button" onClick={this.searchBtnClicked} className="p-0"><IoIosSearch className=" size-5 ml-1 mt-0 pt-0 " /></button>
                 </div>
                 </div>
-                    <div className="bg-gray-100 col-span-1 row-span-12  ">
+                    <div className="bg-gray-100 col-span-1 row-span-12 max-sm:flex max-sm:hidden ">
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
                             
                             {projectsItems.lenth===0 ? '' : projectsItems.map(each=>(
@@ -221,7 +221,7 @@ class TaskBoard extends Component {
                         {this.reactPopUpNewProject()}
                 </div>
                 </div>
-                <ul className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 bg-gray-200 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
+                <ul className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 bg-gray-200 max-sm:col-span-6 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
                     {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} 
                     projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} 
                     deletedTodoTaskRerender={this.deletedTodoTaskRerender} searchTodo={search}/>))}
@@ -229,7 +229,6 @@ class TaskBoard extends Component {
             </div>
         )
     }
-
 }
 
 export default TaskBoard
