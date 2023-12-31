@@ -26,7 +26,6 @@ const TodoItem = (props) => {
         date = date.slice(8,10) + "-"+date.slice(5,7) + "-" + date.slice(0,4)
         setterEndTime(date)
         settereditEnd(event.target.value)
-     
     } 
     
     //while chaging the status, the data is updated here
@@ -37,37 +36,9 @@ const TodoItem = (props) => {
     const {details,editedTodoRerender,deletedTodoRerender}= props
     const {todo_name,start_time,end_time,task_status,todo_id} = details
     
-    let startTimeIncre = start_time
-    let endTimeIncre = end_time
 
-
-    //converting the string into number type 
-    startTimeIncre = new Date (start_time.slice(0,4),start_time.slice(5,7),start_time.slice(8,10))
-    startTimeIncre.setDate(startTimeIncre.getDate()+1)
-    endTimeIncre = new Date (end_time.slice(0,4),end_time.slice(5,7),end_time.slice(8,10))
-    endTimeIncre.setDate(endTimeIncre.getDate()+1)
-
-
-
-    let monthStart = startTimeIncre.getMonth()
-    let dateStart = startTimeIncre.getDate()
-    if(monthStart<10) monthStart = "0"+monthStart
-    if(dateStart<10) dateStart = "0"+dateStart
-
-    let monthEnd = endTimeIncre.getMonth() 
-    let dateEnd = endTimeIncre.getDate()
-    if(monthEnd<10) monthEnd = "0"+monthEnd
-    if(dateEnd<10) dateEnd = "0"+dateEnd
-
-
-   startTimeIncre = (startTimeIncre.getFullYear()) + "-"+monthStart+"-"+dateStart
-   endTimeIncre = new Date (end_time.slice(0,4),end_time.slice(5,7),end_time.slice(8,10))
-   endTimeIncre.setDate(endTimeIncre.getDate()+1)
-   endTimeIncre = (endTimeIncre.getFullYear()) + "-"+ monthEnd+"-"+dateEnd
-
-
-    let start = startTimeIncre
-    let end = endTimeIncre
+    let start = start_time
+    let end = end_time
 
 
     let startDate = start.slice(8,10) + "-"+start.slice(5,7) + "-" + start.slice(0,4)
