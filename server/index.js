@@ -7,7 +7,7 @@ const path = require('path')
 const { v4: uuidv4 } = require('uuid');
 
 
-//app.use(express.static(path.join(__dirname+'/public/dist')))
+app.use(express.static(path.join(__dirname+'/public/dist')))
 
 app.use(cors())
 app.use(express.json())
@@ -82,8 +82,8 @@ app.put('/todo-edit',function(request,response){
   let {taskName,startDate,endDate,taskStatus,todoId} = request.body;
   startDate = startDate.slice(0,10)
   endDate = endDate.slice(0,10)
-  const q = `update  todo set task_name = "${taskName}", start_time = "${startDate}", end_time = "${endDate}",task_status = "${taskStatus}" where 
-             todo_id = "${todoId}" ;`
+  const q = `update  todo set todo_name = "${taskName}", start_time = "${startDate}", end_time = "${endDate}",task_status = "${taskStatus}" where 
+             todo_id = "${todoId}";`
   db.query(q,(err,res)=>{
    response.send(res)
   })

@@ -12,13 +12,23 @@ const TodoItem = (props) => {
     
 
     //while chaging the startTime, the data is updated here
-    const startTimeChanged =(event)=> setterStartTime(event.target.value.slice(0,10));
+    const startTimeChanged =(event)=>{
+        let date = event.target.value.slice(0,10)
+        date = date.slice(8,10) + "-"+date.slice(5,7) + "-" + date.slice(0,4)
+        setterStartTime(date);
+        settereditStart(event.target.value)
+    }
     
 
     //while chaging the endTime, the data is updated here
-    const endTimeChanged = (event)=> setterEndTime(event.target.value.slice(0,10))
+    const endTimeChanged = (event)=>{
+        let date = event.target.value.slice(0,10)
+        date = date.slice(8,10) + "-"+date.slice(5,7) + "-" + date.slice(0,4)
+        setterEndTime(date)
+        settereditEnd(event.target.value)
+     
+    } 
     
-
     //while chaging the status, the data is updated here
     const selectChanged = (event) => setterStatusName(event.target.value)
     
@@ -26,20 +36,54 @@ const TodoItem = (props) => {
     //destructing the props here
     const {details,editedTodoRerender,deletedTodoRerender}= props
     const {todo_name,start_time,end_time,task_status,todo_id} = details
+    
+    let startTimeIncre = start_time
+    let endTimeIncre = end_time
+
+
+    //converting the string into number type 
+    startTimeIncre = new Date (start_time.slice(0,4),start_time.slice(5,7),start_time.slice(8,10))
+    startTimeIncre.setDate(startTimeIncre.getDate()+1)
+    endTimeIncre = new Date (end_time.slice(0,4),end_time.slice(5,7),end_time.slice(8,10))
+    endTimeIncre.setDate(endTimeIncre.getDate()+1)
+
+
+
+    let monthStart = startTimeIncre.getMonth()
+    let dateStart = startTimeIncre.getDate()
+    if(monthStart<10) monthStart = "0"+monthStart
+    if(dateStart<10) dateStart = "0"+dateStart
+
+    let monthEnd = endTimeIncre.getMonth() 
+    let dateEnd = endTimeIncre.getDate()
+    if(monthEnd<10) monthEnd = "0"+monthEnd
+    if(dateEnd<10) dateEnd = "0"+dateEnd
+
+
+   startTimeIncre = (startTimeIncre.getFullYear()) + "-"+monthStart+"-"+dateStart
+   endTimeIncre = new Date (end_time.slice(0,4),end_time.slice(5,7),end_time.slice(8,10))
+   endTimeIncre.setDate(endTimeIncre.getDate()+1)
+   endTimeIncre = (endTimeIncre.getFullYear()) + "-"+ monthEnd+"-"+dateEnd
+
+
+    let start = startTimeIncre
+    let end = endTimeIncre
+
+
+    let startDate = start.slice(8,10) + "-"+start.slice(5,7) + "-" + start.slice(0,4)
+    let endDate = end.slice(8,10) + "-"+end.slice(5,7) + "-" + end.slice(0,4)
 
 
     //react-hooks for preserving the state changing and re-rendering
     const [taskName,setterTaskName] = useState(todo_name)
-    const [startTime,setterStartTime] = useState(start_time)
-    const [endTime,setterEndTime]= useState(end_time)
+    const [startTime,setterStartTime] = useState(startDate)
+    const [endTime,setterEndTime]= useState(endDate)
     const [statusName,setterStatusName] = useState(task_status)
-
-    
-    //making the dates into single format
-    const startDate = start_time.slice(0,10)
-    const endDate = end_time.slice(0,10)
+    const [editStartTime,settereditStart] = useState(start)
+    const [editEndTime,settereditEnd] = useState(end)
 
 
+   
     //changing styling according to the props received
     let dateStyling = "rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs"
     if(task_status==="inprogress") dateStyling = "rounded-md p-1 pl-2 pr-2 mr-3 font-medium text-xs bg-pink-100 text-pink-400"
@@ -49,6 +93,7 @@ const TodoItem = (props) => {
 
     //function that calls todo re-render after successfull edition
     const onSubmitSuccessEditTodoTask = ()=>{
+        
         editedTodoRerender()
         alert(taskName+ " in " + task_status +" stated task is Edited Successfully!!!") 
     }
@@ -63,7 +108,12 @@ const TodoItem = (props) => {
 
     //function that updated the todo
      const EditBtnClicked =async () =>{
-
+     
+     const  startReversed = startTime.slice(6,10) + "-" + startTime.slice(3,5) + "-"+ (startTime.slice(0,2))
+     const endReversed = endTime.slice(6,10) + "-" + endTime.slice(3,5) + "-"+ (endTime.slice(0,2))
+        let start = startTime.slice(0,10)
+        let end = endTime.slice(0,10)
+        
         const url = "https://alcovex-todotask-anitha.onrender.com/todo-edit"
             const options = {
                 method: 'PUT',
@@ -73,8 +123,8 @@ const TodoItem = (props) => {
                 },
                 body: `{
                     "taskName" : "${taskName}",
-                    "startDate" : "${startTime}",
-                    "endDate" : "${endTime}",
+                    "startDate" : "${startReversed}",
+                    "endDate" : "${endReversed}",
                     "taskStatus" : "${statusName}",
                     "todoId" : "${todo_id}"
                 }`,
@@ -106,7 +156,10 @@ const TodoItem = (props) => {
 
     //function that popsup an editing form
     const reactPopUpNewTodoTask = () => {
-        
+        let startDateChanged =startTime.slice(8,10) + "-"+startTime.slice(5,7) + "-" + startTime.slice(0,4)
+        let endDateChanged = endTime.slice(8,10) + "-"+endTime.slice(5,7) + "-" + endTime.slice(0,4)
+
+     
         return(
           <Popup
             modal
@@ -132,11 +185,11 @@ const TodoItem = (props) => {
                             <div className="flex mt-3">
                                 <div className="mr-3">
                                     <label htmlFor="startDateId" className="pb-2 font-large text-xs text-gray-600">Start date</label>
-                                    <input type="Date" id="startDateId" onChange={startTimeChanged} placeholder="Date" value={startTime} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                    <input type="Date" id="startDateId" onChange={startTimeChanged} placeholder="Date" value={editStartTime} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
                                 </div>
                                 <div>
                                     <label htmlFor="endDateId" className="pb-2 font-large text-xs text-gray-600">End Date</label>
-                                    <input type="Date" id="endDateId" placeholder="Date" onChange={endTimeChanged} value={endTime} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
+                                    <input type="Date" id="endDateId" placeholder="Date" onChange={endTimeChanged} value={editEndTime} className="w-full p-2 mt-3 font-normal text-gray-500 text-xs border-2  border-gray-200 rounded-lg"/>
                                 </div>
                             </div>
                             <div>
@@ -155,7 +208,6 @@ const TodoItem = (props) => {
                                     ()=>{
                                         EditBtnClicked()
                                         close()
-
                                     }
                                     } className="text-white bg-blue-400 rounded-md p-2 pl-4 pr-4 font-medium text-xs" >Edit</button>
                             </div>
@@ -169,7 +221,6 @@ const TodoItem = (props) => {
 
 
 
-
     return(
         <li className="mt-5 bg-white shadow-md rounded-lg p-3">
             <div className="flex justify-between">
@@ -180,13 +231,13 @@ const TodoItem = (props) => {
             <div className="flex ">
                 <div className="flex flex-col">
                     <p className="font-large text-xs text-gray-600 mb-2">StartDate</p>
-                    <p className={dateStyling}>{startDate}</p>
+                    <p className={dateStyling}>{startTime}</p>
                 </div>
                 <div className="flex flex-col">
                     <p className="font-large text-xs text-gray-600 mb-2">Deadline</p>
-                    <p className={dateStyling}>{endDate}</p>
+                    <p className={dateStyling}>{endTime}</p>
                 </div>
-            </div>
+            </div> 
                 <div className="flex justify-start mt-4">
                     {reactPopUpNewTodoTask()}
                 </div>

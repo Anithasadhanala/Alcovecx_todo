@@ -80,8 +80,10 @@ const TaskStatus = (props) => {
     
 
     //while endTime is changed, the data is updated here
-    const endTimeChanged = (event)=> setterEndTime(event.target.value)
-    
+    const endTimeChanged = (event)=>{
+        
+     setterEndTime(event.target.value)
+    }
 
     //while status is changed, the data is updated here
     const selectChanged = (event) => setterStatusName(event.target.value)

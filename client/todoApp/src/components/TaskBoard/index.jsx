@@ -19,7 +19,8 @@ const todoStatusItems = [
 class TaskBoard extends Component {
 
     // state object that holds the initial values
-    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',errProjectPara: false,currentProject:"",search:''}
+    state = {projectsItems: [],projectSelected:'',todoTasksList:[],newProject: '',
+    errProjectPara: false,currentProject:"",search:'',showModal:false}
 
 
     //Build in function that calls the below function as the page loads
@@ -89,7 +90,6 @@ class TaskBoard extends Component {
 
         const {projectsItems} = this.state
         let clickedProjectName=""
-
         projectsItems.map(each=>{
             if(each.project_id===projectId) clickedProjectName = each.project_name
         })
@@ -110,6 +110,7 @@ class TaskBoard extends Component {
               </button>
             }>
             {close=>(
+                
                 <div className="bg-white h-66  grid grid-rows-2 pt-6 pb-6 w-96 rounded-lg shadow-2xl">
                    <div className="flex justify-between pl-4 pr-4 mb-4">
                         <h1>Add new Project</h1>
@@ -136,10 +137,12 @@ class TaskBoard extends Component {
                         </form>
                     </div>  
                 </div>
+              
             )}
           </Popup>
        )
     }
+
 
     //called when a project is added successfully and calls below function for immediate re-rendering
     onSubmitSuccessNewProject = ()=> this.projectItemsFunctionAPI()
@@ -149,7 +152,7 @@ class TaskBoard extends Component {
     newProjectAddBtnClicked =async () =>{
 
         const {newProject} = this.state
-
+    
         if(newProject!==''){
             const url = "https://alcovex-todotask-anitha.onrender.com/project-add"
             const options = {
@@ -190,7 +193,6 @@ class TaskBoard extends Component {
   
     //after adding a new todo, below function re-renders
     newtodoAddedRerender = (projectId)=> this.projectSelectedItemsAPI(projectId)
-    
 
     render(){
         const {projectsItems,todoTasksList,projectSelected,currentProject,search} = this.state
@@ -202,13 +204,13 @@ class TaskBoard extends Component {
                     <h2 className="font-sans font-medium flex  max-md:hidden">Task boards</h2>
                 </div>
                 <div className="  bg-gray-100 col-span-5 pl-8 flex items-center font-sans font-medium justify-around">
-                    <h1 className=" flex  max-md:hidden ">pMy9 Projects / {currentProject}</h1>
+                    <h1 className=" flex  max-md:hidden ">My Projects / {currentProject}</h1>
                     <div className="flex bg-gray-300 rounded-md pr-3">
                     <input type="search" className=" border-2  text-sm p-2 rounded-md rounded-r-none" placeholder="Search" onChange={this.searchChanged} />
                     <button type="button" onClick={this.searchBtnClicked} className="p-0"><IoIosSearch className=" size-5 ml-1 mt-0 pt-0 " /></button>
                 </div>
                 </div>
-                    <div className="bg-gray-100 col-span-1 row-span-12 max-sm:flex max-sm:hidden ">
+                    <div className="bg-gray-100 col-span-1 row-span-12 min-md:flex  max-md:hidden  ">
                         <ul className="grid gap-y-3 w-100 p-2 pl-4 pt-6 pb-6">
                             
                             {projectsItems.lenth===0 ? '' : projectsItems.map(each=>(
@@ -221,7 +223,7 @@ class TaskBoard extends Component {
                         {this.reactPopUpNewProject()}
                 </div>
                 </div>
-                <ul className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 bg-gray-200 max-sm:col-span-6 col-span-5 row-span-12 gap-x-0.5 overflow-x-auto">
+                <ul className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 bg-gray-200 col-span-5 max-md:col-span-6  row-span-12 gap-x-0.5 overflow-x-auto">
                     {todoStatusItems.map(each=>(<TaskStatus key={each.id} details={each} todoTasks={todoTasksList} 
                     projectSelected={projectSelected} newtodoAddedRerender={this.newtodoAddedRerender} 
                     deletedTodoTaskRerender={this.deletedTodoTaskRerender} searchTodo={search}/>))}
