@@ -16,7 +16,7 @@ Client : React.js v18.2.0, Tailwind css v3.0, Grid layouts
 
 server : Node.js v21.5.0, Express.js v4.0
 
-DataBase : Mysql v8.0, phpMyAdmin GUI
+DataBase : Mysql v8.0, Mysql workbench (Hosted at AWS)
 
 # Published URL
 
