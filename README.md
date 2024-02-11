@@ -33,7 +33,7 @@ https://alcovex-todotask-anitha.onrender.com/
 1.Clone the repository to your local machine:
 
 ```git
-git clone https://github.com/Anithasadhanala/votingApplication.git
+git clone https://github.com/Anithasadhanala/Alcovecx_todo.git
 
 ```
 
